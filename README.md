@@ -18,7 +18,18 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 
 ## Images
 
-![parts](https://raw.githubusercontent.com/mgrl/photobooth-buzzer/main/images/parts.png)
+![parts](https://raw.githubusercontent.com/mgrl/photobooth-buzzer/main/images/parts.jpg)
+
+## BOM
+
+- 3d printed part:
+- buzzer: ![Not Aus Schalter/Taster, rastend, 240V, NC und NO Pilztaster rot IP65 1Ö 1S Buzzer P1C400E72](https://www.amazon.de/gp/product/B088F3NNV4/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+- battery: ![4XEEMB 3.7V 1100mAh Lipo Batterie Akku 603449 Lithium Polymer Batterien mit JST Stecker.](https://www.amazon.de/gp/product/B08VRYS8FT/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+- esp board: ![LOLIN32 Lite Board V1.0 mit ESP-32](https://www.amazon.de/dp/B086V8X2RM?ref=ppx_yo2ov_dt_b_product_details&th=1)
+
+## Assembly
+
+TODO
 
 ## Setup
 
