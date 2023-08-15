@@ -1,7 +1,8 @@
 /*
- * Sample program for ESP32 acting as a Bluetooth keyboard
+ * photobooth buzzer.
+ * emulates a keyboard to trigger captures
  *
- * Copyright (c) 2019 Manuel Bl
+ * Copyright (c) 2023 Michael G
  *
  * Licensed under MIT License
  * https://opensource.org/licenses/MIT
@@ -9,20 +10,8 @@
 
 //
 // This program lets an ESP32 act as a keyboard connected via Bluetooth.
-// When a button attached to the ESP32 is pressed, it will generate the key strokes for a message.
+// When a button attached to the ESP32 is pressed, it will generate key strokes.
 //
-// For the setup, a momentary button should be connected to pin 2 and to ground.
-// Pin 2 will be configured as an input with pull-up.
-//
-// In order to receive the message, add the ESP32 as a Bluetooth keyboard of your computer
-// or mobile phone:
-//
-// 1. Go to your computers/phones settings
-// 2. Ensure Bluetooth is turned on
-// 3. Scan for Bluetooth devices
-// 4. Connect to the device called "ESP32 Keyboard"
-// 5. Open an empty document in a text editor
-// 6. Press the button attached to the ESP32
 
 #define US_KEYBOARD 1
 
@@ -31,6 +20,7 @@
 #include "BLEHIDDevice.h"
 #include "HIDTypes.h"
 #include "HIDKeyboardTypes.h"
+#include "Button2.h"
 
 // Change the below values if desired
 #define BUTTON_GPIO 12
@@ -38,35 +28,47 @@
 #define DEVICE_NAME "photobooth-app buzzer"
 
 // Forward declarations
-void bluetoothTask(void *);
+void setupBluetooth();
+void setupButtons();
 void typeText(const char *text);
+void handleTap(Button2 &b);
 
+// global variables
+Button2 btnBuzzer;
 bool isBleConnected = false;
 
 void setup()
 {
+  // reduced power usage
+  setCpuFrequencyMhz(80);
+
+  // start serial
   Serial.begin(115200);
 
-  // configure pin for button
-  pinMode(BUTTON_GPIO, INPUT_PULLUP);
+  // setup buttons
+  setupButtons();
 
-  // start Bluetooth task
-  xTaskCreate(bluetoothTask, "bluetooth", 20000, NULL, 5, NULL);
+  // start Bluetooth and start advertising
+  setupBluetooth();
+
+  delay(1000);
 }
 
 void loop()
 {
-  if (isBleConnected && digitalRead(BUTTON_GPIO) == LOW)
+  btnBuzzer.loop();
+}
+
+void handleTap(Button2 &b)
+{
+  if (isBleConnected)
   {
     // button has been pressed: type message
     Serial.println(HID_CHAR_TAKE_PICTURE);
     typeText(HID_CHAR_TAKE_PICTURE);
-
-    // wait until next char sent
-    delay(500);
   }
-
-  delay(100);
+  else
+    Serial.println("not connected, button press ignored");
 }
 
 // Message (report) sent when a key is pressed or released
@@ -154,6 +156,9 @@ class BleKeyboardCallbacks : public BLEServerCallbacks
     cccDesc->setNotifications(false);
 
     Serial.println("Client has disconnected");
+
+    // restart advertising: https://github.com/espressif/arduino-esp32/issues/6016
+    server->getAdvertising()->start();
   }
 };
 
@@ -176,7 +181,20 @@ class OutputCallbacks : public BLECharacteristicCallbacks
   }
 };
 
-void bluetoothTask(void *)
+void setupButtons()
+{
+  // configure pin for button
+  btnBuzzer.begin(BUTTON_GPIO, INPUT_PULLUP);
+
+  // setTapHandler() is called by any type of click, longpress or shortpress
+  btnBuzzer.setTapHandler(handleTap);
+
+  Serial.println(" Longpress Time:\t" + String(btnBuzzer.getLongClickTime()) + "ms");
+  Serial.println(" DoubleClick Time:\t" + String(btnBuzzer.getDoubleClickTime()) + "ms");
+  Serial.println();
+}
+
+void setupBluetooth()
 {
 
   // initialize the device
@@ -191,7 +209,7 @@ void bluetoothTask(void *)
   output->setCallbacks(new OutputCallbacks());
 
   // set manufacturer name
-  hid->manufacturer()->setValue("Maker Community");
+  hid->manufacturer()->setValue("mgrl");
   // set USB vendor and product ID
   hid->pnp(0x02, 0xe502, 0xa111, 0x0210);
   // information about HID device: device is not localized, device can be connected
@@ -217,7 +235,7 @@ void bluetoothTask(void *)
   advertising->start();
 
   Serial.println("BLE ready");
-  delay(portMAX_DELAY);
+  // delay(portMAX_DELAY);
 };
 
 void typeText(const char *text)
