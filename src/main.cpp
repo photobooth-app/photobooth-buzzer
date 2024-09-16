@@ -21,10 +21,11 @@
 #include "HIDTypes.h"
 #include "HIDKeyboardTypes.h"
 #include "Button2.h"
+#include "Adafruit_MAX1704X.h"
 
 // Change the below values if desired
 #define BUTTON_GPIO 12
-#define HID_CHAR_TAKE_PICTURE "c"
+#define HID_CHAR_TAKE_PICTURE "i"
 #define DEVICE_NAME "photobooth-app buzzer"
 
 // Forward declarations
@@ -34,8 +35,53 @@ void typeText(const char *text);
 void handleTap(Button2 &b);
 
 // global variables
+BLEHIDDevice *hid;
+Adafruit_MAX17048 maxlipo;
 Button2 btnBuzzer;
 bool isBleConnected = false;
+
+void Task_Fuelgauge(void *pvParameters)
+{
+  (void)pvParameters;
+
+  /* init code*/
+
+  Serial.println(F("\nInit MAX17048"));
+
+  delay(100);
+  if (!maxlipo.begin())
+  {
+    Serial.println(F("Couldnt find MAX17048?\nMake sure a battery is plugged in! Continue without Max"));
+  }
+  else
+  {
+    Serial.print(F("Found MAX17048"));
+    Serial.print(F(" with Chip ID: 0x"));
+    Serial.println(maxlipo.getChipID(), HEX);
+  }
+
+  while (1) // A Task shall never return or exit.
+  {
+
+    float cellVoltage = maxlipo.cellVoltage();
+    if (isnan(cellVoltage))
+    {
+      Serial.println("Failed to read cell voltage, check battery is connected!");
+    }
+    else
+    {
+      Serial.print(F("Batt Voltage: "));
+      Serial.print(cellVoltage, 3);
+      Serial.print(" V, ");
+      Serial.print(F("Batt Percent: "));
+      Serial.print(maxlipo.cellPercent(), 1);
+      Serial.println(" %");
+      hid->setBatteryLevel(static_cast<uint8_t>(maxlipo.cellPercent() + 0.5));
+    }
+
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+  }
+}
 
 void setup()
 {
@@ -50,6 +96,9 @@ void setup()
 
   // start Bluetooth and start advertising
   setupBluetooth();
+
+  // setup fuel gauge
+  xTaskCreatePinnedToCore(Task_Fuelgauge, "Task_Fuelgauge", 4096, NULL, 3, NULL, ARDUINO_RUNNING_CORE);
 
   delay(1000);
 }
@@ -124,7 +173,6 @@ static const uint8_t REPORT_MAP[] = {
     END_COLLECTION(0)   // End application collection
 };
 
-BLEHIDDevice *hid;
 BLECharacteristic *input;
 BLECharacteristic *output;
 
@@ -224,7 +272,7 @@ void setupBluetooth()
   hid->startServices();
 
   // set battery level to 100%
-  hid->setBatteryLevel(100);
+  hid->setBatteryLevel(0);
 
   // advertise the services
   BLEAdvertising *advertising = server->getAdvertising();
