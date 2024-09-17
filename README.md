@@ -9,8 +9,10 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 - battery powered, no cords
 - battery status reporting via bluetooth
 - USB-C charge port (and programming)
+- Possible to charge while using. Battery is charged even if buzzer is turned off.
 - simple installation using Visual Studio Code and Platform IO plugin
 - emulates bluetooth keyboard, easy integration in a photobooth
+- Runtime on battery is ~18h. The power consumption measured is about 60mA - the battery has 1100mAh capacity.
 
 ## Images
 
@@ -28,7 +30,9 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 
 ## Assembly
 
-Check images and CAD
+- Check images and CAD
+- Connect button switch to GND and GPIO D12.
+- Connect power switch to GND and EN.
 
 ## Flash ESP
 
