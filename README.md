@@ -7,8 +7,10 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 ## 😍 Features
 
 - battery powered, no cords
+- battery status reporting via bluetooth
+- USB-C charge port (and programming)
 - simple installation using Visual Studio Code and Platform IO plugin
-- emulates keyboard, easy integration in a photobooth
+- emulates bluetooth keyboard, easy integration in a photobooth
 
 ## Images
 
@@ -16,15 +18,16 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 
 ## BOM
 
-- [3d printed part](https://github.com/photobooth-app/photobooth-buzzer/blob/main/cad/stl/inlet.STL)
-- buzzer: [Not Aus Schalter/Taster, rastend, 240V, NC und NO Pilztaster rot IP65 1Ö 1S Buzzer P1C400E72](https://www.amazon.de/gp/product/B088F3NNV4/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-- battery: [4XEEMB 3.7V 1100mAh Lipo Batterie Akku 603449 Lithium Polymer Batterien mit JST Stecker.](https://www.amazon.de/gp/product/B08VRYS8FT/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
-- esp board: [LOLIN32 Lite Board V1.0 mit ESP-32](https://www.amazon.de/dp/B086V8X2RM?ref=ppx_yo2ov_dt_b_product_details&th=1)
+- [3d printed parts](https://github.com/photobooth-app/photobooth-buzzer/tree/main/cad)
+- Buzzer: [Not Aus Schalter/Taster, rastend, 240V, NC und NO Pilztaster rot IP65 1Ö 1S Buzzer P1C400E72](https://www.amazon.de/gp/product/B088F3NNV4)
+- Battery: [4XEEMB 3.7V 1100mAh Lipo Batterie Akku 603449 Lithium Polymer Batterien mit JST Stecker.](https://www.amazon.de/gp/product/B08VRYS8FT)
+- ESP board: [Adafruit ESP32-S3 Feather with STEMMA QT / Qwiic (8 or 4MB flash)](https://www.adafruit.com/product/5477)
 - [on off switch](https://www.amazon.de/gp/product/B07VFV17SP/)
+- some M2 screws
 
 ## Assembly
 
-Check images.
+Check images and CAD
 
 ## Flash ESP
 
