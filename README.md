@@ -15,6 +15,7 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 ## Images
 
 ![parts](https://raw.githubusercontent.com/photobooth-app/photobooth-buzzer/main/images/parts.jpg)
+(image shows the former version. updated 3d model and esp board on 2024-09-16 according to BOM)
 
 ## BOM
 
