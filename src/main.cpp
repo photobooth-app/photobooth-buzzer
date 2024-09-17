@@ -43,6 +43,8 @@ bool isBleConnected = false;
 void Task_Fuelgauge(void *pvParameters)
 {
   (void)pvParameters;
+  uint8_t percentBattery;
+  uint8_t percentHidOut;
 
   /* init code*/
 
@@ -59,6 +61,7 @@ void Task_Fuelgauge(void *pvParameters)
     Serial.print(F(" with Chip ID: 0x"));
     Serial.println(maxlipo.getChipID(), HEX);
   }
+  delay(100);
 
   while (1) // A Task shall never return or exit.
   {
@@ -76,7 +79,10 @@ void Task_Fuelgauge(void *pvParameters)
       Serial.print(F("Batt Percent: "));
       Serial.print(maxlipo.cellPercent(), 1);
       Serial.println(" %");
-      hid->setBatteryLevel(static_cast<uint8_t>(maxlipo.cellPercent() + 0.5));
+      percentBattery = static_cast<uint8_t>(maxlipo.cellPercent() + 0.5);
+      percentHidOut = percentBattery <= 0 ? 0 : percentBattery >= 100 ? 100
+                                                                      : percentBattery;
+      hid->setBatteryLevel(percentHidOut);
     }
 
     vTaskDelay(10000 / portTICK_PERIOD_MS);
@@ -272,7 +278,7 @@ void setupBluetooth()
   hid->startServices();
 
   // set battery level to 100%
-  hid->setBatteryLevel(0);
+  // hid->setBatteryLevel(100);
 
   // advertise the services
   BLEAdvertising *advertising = server->getAdvertising();
