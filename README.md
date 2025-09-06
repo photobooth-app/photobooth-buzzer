@@ -16,8 +16,10 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 
 ## Images
 
-![parts](https://raw.githubusercontent.com/photobooth-app/photobooth-buzzer/main/images/parts.jpg)
-(image shows the former version. updated 3d model and esp board on 2024-09-16 according to BOM)
+![buzzer view 1](https://raw.githubusercontent.com/photobooth-app/photobooth-buzzer/main/images/buzzer1.jpg)
+![buzzer view 2](https://raw.githubusercontent.com/photobooth-app/photobooth-buzzer/main/images/buzzer2.jpg)
+![buzzer parts](https://raw.githubusercontent.com/photobooth-app/photobooth-buzzer/main/images/buzzer_open.jpg)
+
 
 ## BOM
 
@@ -34,7 +36,7 @@ Buzzer based on ESP32 connects to photobooth via bluetooth emulating a keyboard 
 - Connect button switch to GND and GPIO D12.
 - Connect power switch to GND and EN.
 
-## Flash ESP
+## Flash ESP Firmware
 
 - use platformio plugin in VCS
 - load this project
